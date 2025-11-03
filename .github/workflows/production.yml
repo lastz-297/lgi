@@ -1,0 +1,39 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Jekyll site
+        run: |
+          docker run --rm \
+            --volume="${GITHUB_WORKSPACE}:/srv/jekyll" \
+            --env JEKYLL_ENV=production \
+            --env JEKYLL_UID="$(id -u)" \
+            --env JEKYLL_GID="$(id -g)" \
+            jekyll/builder:4 \
+            jekyll build
+
+      - name: Add .nojekyll
+        run: touch _site/.nojekyll
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: _site
+          destination_dir: lgi
+          clean_exclude: |
+            lgi/pr-preview/
+          keep_files: true
