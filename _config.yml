@@ -1,6 +1,3 @@
-cache_dir: /.jekyll-cache-tmp
-
-source: lgi
 baseurl: "/lgi"
 title: LGI Alliance
 description: "Last Z: Survival Shooter | LGI Alliance"

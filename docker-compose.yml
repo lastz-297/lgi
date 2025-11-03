@@ -1,4 +1,3 @@
-# docker-compose.yml
 services:
   jekyll:
     image: jekyll/jekyll:4.2.0
