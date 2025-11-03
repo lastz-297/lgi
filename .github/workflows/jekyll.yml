@@ -5,24 +5,25 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    container:
-      image: jekyll/jekyll:4
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          mkdir -p /tmp/jekyll-cache
-          cd lgi
-          JEKYLL_ENV=production jekyll build --source . --destination ../_site --trace
-        env:
-          JEKYLL_CACHE_DIR: /tmp/jekyll-cache
+
+      - name: Build Jekyll site
+        run: |
+          docker run --rm \
+            --volume="${GITHUB_WORKSPACE}:/srv/jekyll" \
+            --env JEKYLL_ENV=production \
+            jekyll/builder:4 \
+            jekyll build
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
 
   deploy:
-    needs: build-and-deploy
+    needs: build
     permissions:
       pages: write
       id-token: write
