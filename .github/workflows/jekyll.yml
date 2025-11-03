@@ -12,8 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
+          mkdir -p /tmp/jekyll-cache
           cd lgi
-          jekyll build --source . --destination ../_site
+          JEKYLL_ENV=production jekyll build --source . --destination ../_site --trace
+        env:
+          JEKYLL_CACHE_DIR: /tmp/jekyll-cache
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
