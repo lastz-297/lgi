@@ -1,3 +1,4 @@
+# .github/workflows/deploy.yml
 name: Build & Deploy
 
 on:
@@ -18,19 +19,14 @@ jobs:
             --env JEKYLL_UID="$(id -u)" \
             --env JEKYLL_GID="$(id -g)" \
             jekyll/builder:4 \
-            jekyll build 
+            jekyll build
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          path: _site
-
-  deploy:
-    needs: build
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: _site
+          destination_dir: lgi
+          clean_exclude: lgi/pr-preview/
+          keep_files: true
